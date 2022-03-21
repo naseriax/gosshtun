@@ -42,7 +42,7 @@ func main() {
 	localPortNo := make(chan string)
 
     //Initiating the tunnel by calling Tunnel method from gosshtun module.
-    //The expected outcome is to receive a localport number which we xan get in the select statement.
+    //The expected outcome is to receive a localport number which we can get in the select statement.
 	go gosshtun.Tunnel(jumpserver, remoteAddr, localPortNo, tunnelDone)
 
 
