@@ -21,9 +21,10 @@ func main() {
     //We create a new object from pssh module to ssh to Nokia1830PSS Node via cli interface.
     //The IP will be set as 127.0.0.1 since the connection will go through the tunnel. (Enhancement is planned.)
 	node := pssh.Nokia_1830PSS{
-		Ip:       "127.0.0.1",
+		Ip:       "192.168.10.123",
 		UserName: "admin",
 		Password: `admin`,
+        ViaTunnel: true,   //To specify that Tunnel will be used, so 127.0.0.1 IP will be used to connect to the remote node.
 	}
 
 
@@ -34,16 +35,13 @@ func main() {
 		"PASSW": "toor",
 	}
 
-    //Actual Remote node address to be used for ssh tunnel creation.
-	remoteAddr := "192.168.10.123:22"
-
     //Tunnel control channels.
 	tunnelDone := make(chan error)
 	localPortNo := make(chan string)
 
     //Initiating the tunnel by calling Tunnel method from gosshtun module.
     //The expected outcome is to receive a localport number which we can get in the select statement.
-	go gosshtun.Tunnel(jumpserver, remoteAddr, localPortNo, tunnelDone)
+	go gosshtun.Tunnel(jumpserver, fmt.Sprintf("%v:22", node.Ip), localPortNo, tunnelDone)
 
 
     //If everything goes well, we will get the local port number to be used to connect to the remote node.
