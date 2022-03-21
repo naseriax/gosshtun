@@ -41,8 +41,8 @@ func main() {
 	tunnelDone := make(chan error)
 	localPortNo := make(chan string)
 
-    //Initiating the tunnel by calling Tunnel methode from gosshtun module.
-    //The expected outcome is to receive the localport number which we receive in the selecet statement.
+    //Initiating the tunnel by calling Tunnel method from gosshtun module.
+    //The expected outcome is to receive a localport number which we xan get in the select statement.
 	go gosshtun.Tunnel(jumpserver, remoteAddr, localPortNo, tunnelDone)
 
 
@@ -54,11 +54,10 @@ func main() {
 	case err := <-tunnelDone:
 		log.Fatalln(err)
 	}
+
 	//Tunnel is open! your ssh connection codes will be here!
-
-
-    //I just wrapped the normal ssh part to have a more clear view.
-    //It will ssh to the localhost:<port we got from the tunnel>, will execute "show version" command on cli environment and will close the connection.
+    //I wrapped the normal ssh part to have a better view.
+    //It will ssh to the localhost:<port we got from the tunnel>, will execute "show slot *" command on the cli environment and will close the connection.
 	func() {
 		if err := node.Connect(); err != nil {
 			log.Fatalln(err)
