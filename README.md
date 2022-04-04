@@ -19,12 +19,12 @@ import (
 func main() {
 
     //We create a new object from pssh module to ssh to Nokia1830PSS Node via cli interface.
-    //The IP will be set as 127.0.0.1 since the connection will go through the tunnel. (Enhancement is planned.)
 	node := pssh.Nokia_1830PSS{
 		Ip:       "192.168.10.123",
 		UserName: "admin",
 		Password: `admin`,
-        ViaTunnel: true,   //To specify that Tunnel will be used, so 127.0.0.1 IP will be used to connect to the remote node.
+		//To specify that Tunnel will be used, so 127.0.0.1 IP will be used to connect to the remote node.
+        ViaTunnel: true,   
 	}
 
 

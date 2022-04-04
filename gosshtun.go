@@ -44,18 +44,16 @@ func errd(err error, openConns ...interface{}) error {
 }
 
 func Pipe(errch chan error, writer, reader net.Conn) {
+	defer writer.Close()
+	defer reader.Close()
 	_, err := io.Copy(writer, reader)
-	writer.Close()
-	reader.Close()
+
 	if err != nil {
 		if strings.Contains(err.Error(), "An existing connection was forcibly closed by the remote host") {
 			errch <- nil
-		} else {
-			errch <- err
 		}
-	} else {
-		errch <- err
 	}
+	errch <- err
 }
 
 func Tunnel(jumpserver map[string]string, remoteAddr string, localPortNo chan<- string, tunnelDone chan<- error) {
@@ -73,6 +71,9 @@ func Tunnel(jumpserver map[string]string, remoteAddr string, localPortNo chan<- 
 		return
 	}
 	defer lst.Close()
+
+	//localPortNo contains the opened port on localhost to accept the connect.
+	localPortNo <- lst.Addr().String()
 
 	//Connect from Local to jump server
 	l1, err := ssh.Dial("tcp", jumpserver["ADDR"], sshConfig)
@@ -94,14 +95,11 @@ func Tunnel(jumpserver map[string]string, remoteAddr string, localPortNo chan<- 
 	}(remoteDialChan)
 	select {
 	case remoteCon = <-remoteDialChan:
-	case <-time.After(time.Duration(10) * time.Second):
+	case <-time.After(time.Duration(20) * time.Second):
 		tunnelDone <- errd(fmt.Errorf("connection timeout (from Jumpserver to remote node)"), lst, l1)
 		return
 	}
 	defer remoteCon.Close()
-
-	//localPortNo contains the opened port on localhost to accept the connect.
-	localPortNo <- lst.Addr().String()
 
 	//Wait for connection to localport
 	localCon, err := lst.Accept()
