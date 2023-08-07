@@ -56,7 +56,7 @@ func Pipe(errch chan error, writer, reader net.Conn) {
 	errch <- err
 }
 
-func Tunnel(jumpserver map[string]string, remoteAddr string, localPortNo chan<- string, tunnelDone chan<- error, tunnelReady chan<- bool)) {
+func Tunnel(jumpserver map[string]string, remoteAddr string, localPortNo chan<- string, tunnelDone chan<- error, tunnelReady chan<- bool) {
 	var remoteCon net.Conn
 	defer func(tunnelDone chan<- error) { tunnelDone <- nil }(tunnelDone)
 	sshConfig := &ssh.ClientConfig{
