@@ -86,7 +86,7 @@ func Tunnel(jumpserver map[string]string, remoteAddr string, localPortNo chan<- 
 	//Connect from Jumpserver to remote
 	remoteDialChan := make(chan net.Conn)
 	go func(remoteDialChan chan<- net.Conn) {
-		remoteCon, err := l1.Dial(jumpserver["L4"], remoteAddr)
+		remoteCon, err := l1.Dial("tcp", remoteAddr)
 		if err != nil {
 			tunnelDone <- errd(err, l1, lst)
 			return
