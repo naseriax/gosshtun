@@ -65,7 +65,7 @@ func Tunnel(jumpserver map[string]string, remoteAddr string, localPortNo chan<- 
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 		Timeout:         time.Duration(10) * time.Second,
 	}
-	lst, err := net.Listen(jumpserver["transportmethode"], "127.0.0.1:0")
+	lst, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {
 		tunnelDone <- errd(err, nil)
 		return
@@ -86,7 +86,7 @@ func Tunnel(jumpserver map[string]string, remoteAddr string, localPortNo chan<- 
 	//Connect from Jumpserver to remote
 	remoteDialChan := make(chan net.Conn)
 	go func(remoteDialChan chan<- net.Conn) {
-		remoteCon, err := l1.Dial(jumpserver["transportmethode"], remoteAddr)
+		remoteCon, err := l1.Dial(jumpserver["L4"], remoteAddr)
 		if err != nil {
 			tunnelDone <- errd(err, l1, lst)
 			return
